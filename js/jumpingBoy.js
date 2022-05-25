@@ -10,6 +10,8 @@ import Coin from "./coin.js";
 */
 //font
 let gameFont;
+//image
+let backgroundImg;
 //buttons
 let stageButton;
 let rulesButton;
@@ -80,6 +82,7 @@ let boy;
 */
 function preload() {
   gameFont = loadFont("font/PressStart2P-Regular.ttf");
+  backgroundImg = loadImage("png/background.jpg");
 }
 window.preload = preload;
 /*
@@ -202,8 +205,8 @@ window.setup = setup;
 
 //garrit code
 function ground(y) {
-  fill(34, 139, 34);
-  stroke(34, 139, 34);
+  fill(84, 39, 156);
+  stroke(84, 39, 156);
   rect(0, y, width, height - y);
 }
 
@@ -213,7 +216,7 @@ function ground(y) {
 
 //start screen (MAIN)
 function startScreen() {
-  background(20, 94, 204);
+  image(backgroundImg, 0, 0);
   //text
   fill(255);
   textSize(40);
@@ -224,11 +227,12 @@ function startScreen() {
   rulesButton.display();
 
   //ground
-  ground(370);
+  ground(550);
 }
 //rules screen (MAIN)
 function rulesScreen() {
-  background(20, 94, 204);
+  image(backgroundImg, 0, 0);
+
   //text
   fill(255);
   textSize(40);
@@ -242,11 +246,12 @@ function rulesScreen() {
   //buttons
   rulesBackButton.display();
   //ground
-  ground(370);
+  ground(550);
 }
 //stages screen (MAIN)
 function stagesScreen() {
-  background(20, 94, 204);
+  image(backgroundImg, 0, 0);
+
   //text
   fill(255);
   textSize(40);
@@ -258,15 +263,17 @@ function stagesScreen() {
   stagesBackButton.display();
 
   //ground
-  ground(370);
+  ground(550);
 }
 //game screen (MAIN)
 function stageScreen1() {
   background(20, 94, 204);
+  image(backgroundImg, 0, 0);
 }
 //won screen (MAIN)
 function wonScreen() {
-  background(20, 94, 204);
+  image(backgroundImg, 0, 0);
+
   //text
   fill(255);
   textSize(40);
@@ -276,11 +283,12 @@ function wonScreen() {
   exitWonButton.display();
 
   //ground
-  ground(370);
+  ground(550);
 }
 //lost screen (MAIN)
 function lostScreen() {
-  background(20, 94, 204);
+  image(backgroundImg, 0, 0);
+
   //text
   fill(255);
   textSize(40);
@@ -289,22 +297,20 @@ function lostScreen() {
   tryAgainButton.display();
   exitLostButton.display();
   //ground
-  ground(370);
+  ground(550);
 }
 
-let collisionState = false;
-function checkCollision() {
-  for (let brick of brickArr) {
+function checkCollision(brick) {
     if (
     (boy.x + boy.width) >= brick.x && 
     boy.x <= (brick.x + brick.width - 50) && 
     (boy.y + boy.height) >= brick.y && 
     boy.y <= (brick.y + brick.height - 50)) {
-       return collisionState = true;
+      return true;
     } else {
-       return collisionState = false;
+      return false;
     }
-  }
+
 }
 
 //states
@@ -349,12 +355,43 @@ function draw() {
     boy.display(boy.x, boy.y, boy.width, boy.height);
     push();
     //bricks
+    
     for (let brick of brickArr) {
       brick.display(brick.x, brick.y, brick.width, brick.height);  
+      if (checkCollision(brick) === true && brick.y !== 0 && brick.x !== -10) {
+        if (keyIsDown(87) && boy.y <= brick.y) {
+          //makes the character jump from the top of the bricks
+          gravity = 1;
+          boy.y -= gravity;
+        } else if (boy.y <= brick.y) {
+          //makes the character stop on top of the bricks
+          gravity = 0;
+          boy.y = brick.y - boy.height - 5;
+        } 
+        if (keyIsDown(87) && boy.y >= brick.y) {
+          //makes the character unable to go through the bricks
+          gravity = 0;
+          boy.y = brick.y + brick.height - 44;
+        } 
+      } else {
+        if (keyIsDown(87)) {
+          //makes the character jump when there is no collision
+          gravity = 0.5; 
+          boy.y -= gravity
+        } else if (boy.y < groundLevel - 50) {
+          //makes the character fall when there is no collision
+          gravity = 0.5;
+          boy.y += gravity;
+      }
+      }
     }
     //coins
     for (let coin of coinArr) {
       coin.display();
+      if (boy.y <= coin.y && boy.y + boy.height >= coin.y && boy.x <= coin.x && boy.x + boy.width >= coin.x) {
+        coinArr.splice(coinArr.indexOf(coin), 1); 
+        console.log("coin gone");
+      }
     }
     //ground
     ground(groundLevel);
@@ -392,39 +429,58 @@ function draw() {
   //         boy.y -= gravity;
   //     } 
   // } else {
-    checkCollision();
-    for (let brick of brickArr) { 
-      if (collisionState === true) {
-        if (keyIsDown(87)) {
-          gravity = 0;
-          boy.y = brick.y + 50;
-          console.log("true up"); 
-        } else if (boy.y < groundLevel - 50) {
-          gravity = 1;
-          let boyPosition = boy.y + boy.height;
-          boyPosition += gravity;
-          console.log("true down");
-        }
-      } else if (collisionState === false) {
-        if (keyIsDown(87)) {
-          gravity = 1;
-          boy.y -= gravity
-          //console.log("false up");
-        } else if (boy.y < groundLevel - 50) {
-          gravity = 1;
-          boy.y += gravity;
-          //console.log("false down");
-      }
-      }
-    }
-    
-    
-    
+
+
     
 
     //time stuff
-    if (gameTime >= 5000) {
+    if (gameTime >= 5000 && coinArr.length !== 0) {
       state = "lost_page";
+      finalGameTime = gameTime;
+      coinArr.push(
+        coin,
+        coin2,
+        coin3,
+        coin4,
+        coin5,
+        coin6,
+        coin7,
+        coin8,
+        coin9,
+        coin10,
+        coin11,
+        coin12,
+        coin13,
+        coin14,
+        coin15,
+        coin16,
+        coin17 
+      );
+      boy.x = boyX;
+      boy.y = boyY;
+    } else if (gameTime <= 5000 && coinArr.length === 0) {
+      state = "won_page";
+      coinArr.push(
+        coin,
+        coin2,
+        coin3,
+        coin4,
+        coin5,
+        coin6,
+        coin7,
+        coin8,
+        coin9,
+        coin10,
+        coin11,
+        coin12,
+        coin13,
+        coin14,
+        coin15,
+        coin16,
+        coin17 
+      );
+      boy.x = boyX;
+      boy.y = boyY;
       finalGameTime = gameTime;
     }
   } else if (state === "won_page") {
