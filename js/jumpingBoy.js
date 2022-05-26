@@ -1,13 +1,20 @@
 /*
     IMPORT ASSETS 
 */
+
+
 import Button from "./button.js";
 import Brick from "./brick.js";
 import Boy from "./boy.js";
 import Coin from "./coin.js";
+import Obstacle from "./obstacle.js";
+
+
 /*
     ALL VARIABLES
 */
+
+
 //font
 let gameFont;
 //image
@@ -24,7 +31,7 @@ let exitWonButton;
 let exitLostButton;
 //bricks
 let brickArr = [];
-let brick;
+let brick1;
 let brick2;
 let brick3;
 let brick4;
@@ -60,35 +67,72 @@ let coin14;
 let coin15;
 let coin16;
 let coin17;
-//positions and gravity
+//obstacle
+let obstacleArr = [];
+let obstacle1;
+let obstacle2;
+let obstacle3;
+let obstacle4;
+let obstacle5;
+let obstacle6;
+let obstacle7;
+let obstacle8;
+//boy positions
 let boyX = 100;
-let boyY = 500;
+let boyY = 400;
 let boyH = 51;
 let boyW = 31;
-let gravity = 3;
+//brick positions
 let brickX = 20;
 let brickY = 220;
 let brickH = 100;
 let brickW = 100;
-let groundLevel = 570;
+//coin positions
 let coinX = 100;
 let coinY = 100;
-let lastX = 0;
-let lastY = 0;
+//obstacle position
+let obstacleX = 100;
+let obstacleY = 100;
+let obstacleW = 50;
+let obstacleH = 50;
+//gravity 
+let gravity = 3;
+//ground position 
+let groundLevel = 530;
 //boy
 let boy;
+//states
+let state = "start_page";
+//time
+let totalTime;
+let otherScreensTime;
+let timeLimit = 600;
+let gameTime;
+let finalGameTime;
+
+
 /*
     GAME PRELOAD 
 */
+
+
 function preload() {
   gameFont = loadFont("font/PressStart2P-Regular.ttf");
-  backgroundImg = loadImage("png/background.jpg");
+  // source https://pixabay.com/illustrations/game-background-sky-game-landscape-4956017/
+  backgroundImg = loadImage("png/game_background.jpg");
+  
 }
+
 window.preload = preload;
+
+
 /*
     GAME SETUP 
 */
+
+
 function setup() {
+  //canvas
   createCanvas(1500, 650);
   //font
   textFont(gameFont);
@@ -104,9 +148,8 @@ function setup() {
   replayButton = new Button((width - 400) / 2, 250, 150, 50, "Replay");
   exitWonButton = new Button((width - 0) / 2, 250, 150, 50, "Exit");
   exitLostButton = new Button((width + 10) / 2, 250, 150, 50, "Exit");
-
   //bricks
-  brick = new Brick(brickX, brickY + 100, brickW, brickH);
+  brick1 = new Brick(brickX, brickY + 100, brickW, brickH);
   brick2 = new Brick(brickX + 50, brickY + 100, brickW, brickH);
   brick3 = new Brick(brickX + 100, brickY + 100, brickW, brickH);
 
@@ -130,7 +173,7 @@ function setup() {
   brick16 = new Brick(brickX + 1150, brickY + 200, brickW, brickH);
   brick17 = new Brick(brickX + 1300, brickY, brickW, brickH);
   brickArr.push(
-    brick,
+    brick1,
     brick2,
     brick3,
     brick4,
@@ -148,10 +191,8 @@ function setup() {
     brick16,
     brick17
   );
-
   //boy
   boy = new Boy(boyX, boyY, boyW, boyH);
-
   //coins
   coin = new Coin(coinX-25, coinY +180, 30, 30);//
   coin2 = new Coin(coinX -75, coinY +180, 30, 30);//
@@ -195,28 +236,48 @@ function setup() {
     coin16,
     coin17 
   );
+  //obstacles
+  obstacle1 = new Obstacle(obstacleX, obstacleY + 30, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle2 = new Obstacle(obstacleX + 1100, obstacleY + 80, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle3 = new Obstacle(obstacleX + 200, obstacleY + 200, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle4 = new Obstacle(obstacleX + 550, obstacleY + 150, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle5 = new Obstacle(obstacleX + 1300, obstacleY - 20, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle6 = new Obstacle(obstacleX + 900, obstacleY + 200, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle7 = new Obstacle(obstacleX + 400, obstacleY + 10, obstacleW / 1.2, obstacleH / 1.2);
+  obstacle8 = new Obstacle(obstacleX + 730, obstacleY + 100, obstacleW / 1.2, obstacleH / 1.2);
+  obstacleArr.push(
+    obstacle1,
+    obstacle2,
+    obstacle3,
+    obstacle4,
+    obstacle5,
+    obstacle6,
+    obstacle7,
+    obstacle8
+  );
   
 } 
+
 window.setup = setup;
 
-/*
-    GAME ASSETS 
-*/
 
-//garrit code
+// The following 5 lines of code was added by courtesy of Garrit Schaap
 function ground(y) {
-  fill(84, 39, 156);
-  stroke(84, 39, 156);
+  fill(26, 176, 49);
+  stroke(26, 176, 49);
   rect(0, y, width, height - y);
 }
+
 
 /*
     ALL SCREENS
 */
 
+
 //start screen (MAIN)
 function startScreen() {
   image(backgroundImg, 0, 0);
+  backgroundImg.resize(1500, 750);
   //text
   fill(255);
   textSize(40);
@@ -227,7 +288,7 @@ function startScreen() {
   rulesButton.display();
 
   //ground
-  ground(550);
+  ground(520);
 }
 //rules screen (MAIN)
 function rulesScreen() {
@@ -238,15 +299,15 @@ function rulesScreen() {
   textSize(40);
   text("Rules", 630, 140);
   textSize(13.5);
-  text("Reach the top within the time limit to win", 450, 180);
+  text("Collect the coins within the time limit to win", 450, 180);
   textSize(35);
   text("Controls", 590, 250);
   textSize(13.5);
-  text("Spacebar: to jump, Arrows: to move", 500, 300);
+  text("W: to jump, A and D: to move", 500, 300);
   //buttons
   rulesBackButton.display();
   //ground
-  ground(550);
+  ground(520);
 }
 //stages screen (MAIN)
 function stagesScreen() {
@@ -263,7 +324,7 @@ function stagesScreen() {
   stagesBackButton.display();
 
   //ground
-  ground(550);
+  ground(520);
 }
 //game screen (MAIN)
 function stageScreen1() {
@@ -283,7 +344,7 @@ function wonScreen() {
   exitWonButton.display();
 
   //ground
-  ground(550);
+  ground(520);
 }
 //lost screen (MAIN)
 function lostScreen() {
@@ -297,34 +358,43 @@ function lostScreen() {
   tryAgainButton.display();
   exitLostButton.display();
   //ground
-  ground(550);
+  ground(520);
 }
 
-function checkCollision(brick) {
-    if (
-    (boy.x + boy.width) >= brick.x && 
-    boy.x <= (brick.x + brick.width - 50) && 
-    (boy.y + boy.height) >= brick.y && 
-    boy.y <= (brick.y + brick.height - 50)) {
-      return true;
-    } else {
-      return false;
-    }
 
+/*
+    COLLISION FUNCTIONS
+*/
+
+//brick collision
+function checkCollisionBrick(brick) {
+  if (
+  (boy.x + boy.width) >= brick.x && 
+  boy.x <= (brick.x + brick.width - 50) && 
+  (boy.y + boy.height) >= brick.y && 
+  boy.y <= (brick.y + brick.height - 50)) {
+    return true;
+  } else {
+    return false;
+  }
 }
-
-//states
-let state = "start_page";
-
-//time
-let totalTime;
-let otherScreensTime;
-let gameTime;
-let finalGameTime;
+//obstacle collision
+function checkCollisionObstacle(obstacle) {
+  if (
+  (boy.x + boy.width) >= obstacle.x && 
+  boy.x <= (obstacle.x + obstacle.width) && 
+  (boy.y + boy.height) >= obstacle.y && 
+  boy.y <= (obstacle.y + obstacle.height)) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 /*
     DRAW FUNCTION
 */
+
 
 function draw() {
   totalTime = millis();
@@ -343,22 +413,22 @@ function draw() {
   } else if (state === "stage1_page") {
     stageScreen1();
     // The following 5 lines of code was adapted from https://www.youtube.com/watch?v=iR0m6j8RwAI Accessed: 2022-04-15
+    //time properties 
     otherScreensTime = otherScreensTime;
     gameTime = int((totalTime - otherScreensTime) / 1000);
+
     textSize(13);
     fill(255);
-    text(gameTime + " Seconds", 20, 30);
+    text("Time: " + (timeLimit - gameTime) + " seconds", 20, 30);
 
-    lastX = boyX;
-    lastY = boyY;
     //character
     boy.display(boy.x, boy.y, boy.width, boy.height);
-    push();
     //bricks
-    
     for (let brick of brickArr) {
+      //displays the bricks
       brick.display(brick.x, brick.y, brick.width, brick.height);  
-      if (checkCollision(brick) === true && brick.y !== 0 && brick.x !== -10) {
+      //collision
+      if (checkCollisionBrick(brick) === true && brick.y !== 0 && brick.x !== -10) {
         if (keyIsDown(87) && boy.y <= brick.y) {
           //makes the character jump from the top of the bricks
           gravity = 1;
@@ -382,61 +452,63 @@ function draw() {
           //makes the character fall when there is no collision
           gravity = 0.5;
           boy.y += gravity;
-      }
+       }
       }
     }
     //coins
     for (let coin of coinArr) {
+      //displays the coins
       coin.display();
+      //remove coins from the array when they collide with the character
       if (boy.y <= coin.y && boy.y + boy.height >= coin.y && boy.x <= coin.x && boy.x + boy.width >= coin.x) {
         coinArr.splice(coinArr.indexOf(coin), 1); 
-        console.log("coin gone");
+      }
+    }
+    text("Remaining coins: " + coinArr.length, 1230, 30);
+    //obstacles
+    for (let obstacle of obstacleArr) {
+      obstacle.display();
+      if(checkCollisionObstacle(obstacle) === true) {
+        state = "lost_page";
+        finalGameTime = gameTime;
+        coinArr = [];
+        coinArr.push(
+          coin,
+          coin2,
+          coin3,
+          coin4,
+          coin5,
+          coin6,
+          coin7,
+          coin8,
+          coin9,
+          coin10,
+          coin11,
+          coin12,
+          coin13,
+          coin14,
+          coin15,
+          coin16,
+          coin17 
+        );
+        boy.x = boyX;
+        boy.y = boyY;
+        finalGameTime = gameTime;
       }
     }
     //ground
     ground(groundLevel);
-    pop();
-
-
-    //LEFT AND RIGHT
+    //makes the character move right or left
     if (keyIsDown(65) && boy.x > 0) {
         boy.x -= 5;
     } else if (keyIsDown(68) && boy.x < 1400) {
         boy.x += 5;
     }
-  
-    // COLLISION 
-  //   if (
-  //     boy.y + boy.height > brick.y - brick.height &&
-  //     boy.x > brick.x + (brick.width + 150) &&
-  //     boy.x < brick.x + (brick.width + 250) &&
-  //     boy.y + boy.height < brick.y - (brick.height - 50)
-  //   ) {
-  //     console.log("above second collusion");
-  //     if (keyIsDown(87) && boy.y < 650) {
-  //       gravity = 5;
-  //       boy.y -= gravity;
-  //     }
-  //   } else if (
-  //     boy.y + boy.height < brick.y - brick.height &&
-  //     boy.x > brick.x + (brick.width + 150) &&
-  //     boy.x < brick.x + (brick.width + 250) &&
-  //     boy.y > brick.y - (brick.height - 50)
-  //   ) {
-  //     console.log("below");
-  //     if (keyIsDown(87) && boy.y < 650) {
-  //         gravity = 5;
-  //         boy.y -= gravity;
-  //     } 
-  // } else {
-
-
-    
-
-    //time stuff
-    if (gameTime >= 5000 && coinArr.length !== 0) {
+    //game conditions 
+    if ((timeLimit - gameTime) <= 0 && coinArr.length !== 0 || boy.y < 0) {
       state = "lost_page";
       finalGameTime = gameTime;
+      coinArr = [];
       coinArr.push(
         coin,
         coin2,
@@ -458,7 +530,8 @@ function draw() {
       );
       boy.x = boyX;
       boy.y = boyY;
-    } else if (gameTime <= 5000 && coinArr.length === 0) {
+      finalGameTime = gameTime;
+    } else if ((timeLimit - gameTime) >= 0 && coinArr.length === 0) {
       state = "won_page";
       coinArr.push(
         coin,
@@ -501,21 +574,16 @@ window.draw = draw;
     MOUSE CLICK FUNCTION
 */
 
+//makes the buttons clickable
 // The following 20 lines of code was added by courtesy of Garrit Schaap
 function mouseClicked() {
   if (state === "start_page" && stageButton.hitTest(mouseX, mouseY)) {
     state = "stages_page";
   } else if (state === "start_page" && rulesButton.hitTest(mouseX, mouseY)) {
     state = "rules_page";
-  } else if (
-    state === "stages_page" &&
-    stagesBackButton.hitTest(mouseX, mouseY)
-  ) {
+  } else if (state === "stages_page" && stagesBackButton.hitTest(mouseX, mouseY)) {
     state = "start_page";
-  } else if (
-    state === "rules_page" &&
-    rulesBackButton.hitTest(mouseX, mouseY)
-  ) {
+  } else if (state === "rules_page" && rulesBackButton.hitTest(mouseX, mouseY)) {
     state = "start_page";
   } else if (state === "stages_page" && stage1Button.hitTest(mouseX, mouseY)) {
     state = "stage1_page";
@@ -529,6 +597,5 @@ function mouseClicked() {
     state = "start_page";
   }
 }
+
 window.mouseClicked = mouseClicked;
-
-
