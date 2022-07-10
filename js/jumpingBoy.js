@@ -106,7 +106,7 @@ let state = "start_page";
 //time
 let totalTime;
 let otherScreensTime;
-let timeLimit = 600;
+let timeLimit = 60;
 let gameTime;
 let finalGameTime;
 
@@ -118,8 +118,8 @@ let finalGameTime;
 
 function preload() {
   gameFont = loadFont("font/PressStart2P-Regular.ttf");
-  // source https://pixabay.com/illustrations/game-background-sky-game-landscape-4956017/
-  backgroundImg = loadImage("png/game_background.jpg");
+  // source https://toppng.com/starry-sky-stars-space-dark-astronomy-PNG-free-PNG-Images_447546
+  backgroundImg = loadImage("png/sky.jpg");
   
 }
 
@@ -255,7 +255,6 @@ function setup() {
     obstacle7,
     obstacle8
   );
-  
 } 
 
 window.setup = setup;
@@ -263,8 +262,8 @@ window.setup = setup;
 
 // The following 5 lines of code was added by courtesy of Garrit Schaap
 function ground(y) {
-  fill(26, 176, 49);
-  stroke(26, 176, 49);
+  fill(38, 11, 36);
+  stroke(38, 11, 36);
   rect(0, y, width, height - y);
 }
 
@@ -279,9 +278,10 @@ function startScreen() {
   image(backgroundImg, 0, 0);
   backgroundImg.resize(1500, 750);
   //text
+  noStroke();
   fill(255);
   textSize(40);
-  text("Jumping Boy", 500, 140);
+  text("Jumping Boy", 500, 160);
 
   //buttons
   stageButton.display();
@@ -295,15 +295,16 @@ function rulesScreen() {
   image(backgroundImg, 0, 0);
 
   //text
+  noStroke();
   fill(255);
   textSize(40);
-  text("Rules", 630, 140);
-  textSize(13.5);
-  text("Collect the coins within the time limit to win", 450, 180);
+  text("Rules", 630, 160);
+  textSize(13.5); 
+  text("Collect the coins within the time limit to win", 420, 200);
   textSize(35);
-  text("Controls", 590, 250);
+  text("Controls", 590, 270);
   textSize(13.5);
-  text("W: to jump, A and D: to move", 500, 300);
+  text("W: to jump, A and D: to move", 535, 320);
   //buttons
   rulesBackButton.display();
   //ground
@@ -314,6 +315,7 @@ function stagesScreen() {
   image(backgroundImg, 0, 0);
 
   //text
+  noStroke();
   fill(255);
   textSize(40);
   text("Stages", 590, 140);
@@ -330,15 +332,17 @@ function stagesScreen() {
 function stageScreen1() {
   background(20, 94, 204);
   image(backgroundImg, 0, 0);
+  noStroke();
 }
 //won screen (MAIN)
 function wonScreen() {
   image(backgroundImg, 0, 0);
 
   //text
+  noStroke();
   fill(255);
   textSize(40);
-  text("You Won", 565, 130);
+  text("You Won", 575, 130);
   //buttons
   replayButton.display();
   exitWonButton.display();
@@ -351,9 +355,10 @@ function lostScreen() {
   image(backgroundImg, 0, 0);
 
   //text
+  noStroke();
   fill(255);
   textSize(40);
-  text("You Lost", 548, 130);
+  text("You Lost", 557, 130);
   //buttons
   tryAgainButton.display();
   exitLostButton.display();
@@ -379,17 +384,18 @@ function checkCollisionBrick(brick) {
   }
 }
 //obstacle collision
-function checkCollisionObstacle(obstacle) {
+function checkCollisionObstacle(obstacle){
   if (
-  (boy.x + boy.width) >= obstacle.x && 
-  boy.x <= (obstacle.x + obstacle.width) && 
-  (boy.y + boy.height) >= obstacle.y && 
+  (boy.x + boy.width) >= obstacle.x &&
+  boy.x <= (obstacle.x + obstacle.width) &&
+  (boy.y + boy.height) >= obstacle.y &&
   boy.y <= (obstacle.y + obstacle.height)) {
-    return true;
-  } else {
-    return false;
-  }
+  return true;
+} else { 
+  return false;
 }
+}
+
 
 /*
     DRAW FUNCTION

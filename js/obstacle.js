@@ -8,8 +8,8 @@ export default class Obstacle {
 
   display() {
     push();
-    fill(255, 0, 0);
-    stroke(255, 0, 0);
+    fill(97, 30, 115);
+    stroke(97, 30, 115);
     rect(this.x, this.y, this.width, this.height, 7);
     pop();
   }

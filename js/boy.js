@@ -10,7 +10,5 @@ export default class Boy {
 
   display(x, y) {
     image(this.image, x, y, this.width * 1.28, this.height);
-    fill(0);
-    ellipse(x + 20, y + 51, 6);
   }
 }
