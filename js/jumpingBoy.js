@@ -281,7 +281,7 @@ function startScreen() {
   noStroke();
   fill(255);
   textSize(40);
-  text("Jumping Boy", 500, 160);
+  text("Floating Boy", 500, 160);
 
   //buttons
   stageButton.display();
@@ -301,10 +301,11 @@ function rulesScreen() {
   text("Rules", 630, 160);
   textSize(13.5); 
   text("Collect the coins within the time limit to win", 420, 200);
+  text("If you bump against a purple square you will lose", 410, 260);
   textSize(35);
-  text("Controls", 590, 270);
+  text("Controls", 590, 360);
   textSize(13.5);
-  text("W: to jump, A and D: to move", 535, 320);
+  text("W: to float, A and D: to move", 535, 410);
   //buttons
   rulesBackButton.display();
   //ground
